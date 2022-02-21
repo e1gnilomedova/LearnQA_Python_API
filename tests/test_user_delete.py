@@ -1,4 +1,5 @@
-import requests
+# import requests
+from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 
@@ -6,7 +7,7 @@ class TestUserDelete(BaseCase):
     def setup(self):
 #Регистрируем нового пользователя1.
         register_data = self.prepare_registration_data()
-        response = requests.post("https://playground.learnqa.ru/api/user/", data=register_data)
+        response = MyRequests.post("/user/", data=register_data)
 
         Assertions.assert_code_status(response, 200)
         Assertions.assert_json_has_key(response, "id")
@@ -21,7 +22,7 @@ class TestUserDelete(BaseCase):
             'email': email1,
             'password': password1
         }
-        response1 = requests.post("https://playground.learnqa.ru/api/user/login", data=login_data1)
+        response1 = MyRequests.post("/user/login", data=login_data1)
 
         Assertions.assert_code_status(response1, 200)
         Assertions.assert_json_has_key(response1, "user_id")
@@ -34,7 +35,7 @@ class TestUserDelete(BaseCase):
             'email': 'vinkotov@example.com',
             'password': '1234'
         }
-        response2 = requests.post("https://playground.learnqa.ru/api/user/login", data=login_data2)
+        response2 = MyRequests.post("/user/login", data=login_data2)
 
         Assertions.assert_code_status(response2, 200)
         Assertions.assert_json_has_key(response2, "user_id")
@@ -45,8 +46,8 @@ class TestUserDelete(BaseCase):
 
     def test_1(self):
 #1. Первый - на попытку удалить пользователя по ID 2.
-        response3 = requests.delete(
-            f"https://playground.learnqa.ru/api/user/{self.user_id2}",
+        response3 = MyRequests.delete(
+            f"/user/{self.user_id2}",
             headers={"x-csrf-token": self.token2},
             cookies={"auth_sid": self.auth_sid2}
         )
@@ -54,8 +55,8 @@ class TestUserDelete(BaseCase):
 # Убедиться, что система не даст вам удалить этого пользователя.
         Assertions.assert_code_status(response3, 400)
 
-        response4 = requests.get(
-            f"https://playground.learnqa.ru/api/user/{self.user_id2}",
+        response4 = MyRequests.get(
+            f"/user/{self.user_id2}",
             headers={"x-csrf-token": self.token2},
             cookies={"auth_sid": self.auth_sid2}
         )
@@ -69,15 +70,15 @@ class TestUserDelete(BaseCase):
 #2. Второй - позитивный. Создать пользователя, авторизоваться из-под него, удалить, затем попробовать получить его данные по ID
 # и убедиться, что пользователь действительно удален.
 
-        response5 = requests.delete(
-            f"https://playground.learnqa.ru/api/user/{self.user_id1}",
+        response5 = MyRequests.delete(
+            f"/user/{self.user_id1}",
             headers={"x-csrf-token": self.token1},
             cookies={"auth_sid": self.auth_sid1}
         )
         Assertions.assert_code_status(response5, 200)
 
-        response6 = requests.get(
-            f"https://playground.learnqa.ru/api/user/{self.user_id1}",
+        response6 = MyRequests.get(
+            f"/user/{self.user_id1}",
             headers={"x-csrf-token": self.token1},
             cookies={"auth_sid": self.auth_sid1}
         )
@@ -86,16 +87,16 @@ class TestUserDelete(BaseCase):
 
     def test_3(self):
 #3. Третий - негативный, попробовать удалить пользователя, будучи авторизованными другим пользователем.
-        response7 = requests.delete(
-            f"https://playground.learnqa.ru/api/user/{self.user_id1}",
+        response7 = MyRequests.delete(
+            f"/user/{self.user_id1}",
             headers={"x-csrf-token": self.token2},
             cookies={"auth_sid": self.auth_sid2}
         )
 
         Assertions.assert_code_status(response7, 400)
 
-        response8 = requests.get(
-            f"https://playground.learnqa.ru/api/user/{self.user_id1}",
+        response8 = MyRequests.get(
+            f"/user/{self.user_id1}",
             headers={"x-csrf-token": self.token1},
             cookies={"auth_sid": self.auth_sid1}
         )
