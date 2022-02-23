@@ -6,7 +6,8 @@ class TestToken:
 
     def test_get_token(self):
 #1) создавал задачу
-        response = requests.get("https://playground.learnqa.ru/ajax/api/longtime_job")
+        url = "https://playground.learnqa.ru/ajax/api/longtime_job"
+        response = requests.get(url)
 
         # print(f" response: {response.status_code}")
         # print(f" response: {response.text}")
@@ -24,7 +25,7 @@ class TestToken:
 
 # 2) делал один запрос с token ДО того, как задача готова, убеждался в правильности поля status
         payload = {"token": token}
-        response1 = requests.post("https://playground.learnqa.ru/ajax/api/longtime_job", data=payload)
+        response1 = requests.post(url, data=payload)
 
         # print(f" response1: {response1.status_code}")
         # print(f" response1: {response1.text}")
@@ -42,7 +43,7 @@ class TestToken:
 
                 # 4) делал бы один запрос c token ПОСЛЕ того, как задача готова,
                 # убеждался в правильности поля status и наличии поля result
-                response2 = requests.post("https://playground.learnqa.ru/ajax/api/longtime_job", data=payload)
+                response2 = requests.post(url, data=payload)
 
                 # print(f" response2: {response2.status_code}")
                 # print(f" response2: {response2.text}")
