@@ -1,14 +1,19 @@
-import requests
+# import requests
+from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 from datetime import datetime
+import allure
 
+
+@allure.epic("Home work")
+@allure.feature("lesson4_Ex17")
 class TestUserEditExample17(BaseCase):
     def setup(self):
 
 # Регистрируем нового пользователя, ему будем изменять данные. Это пользователь1.
         register_data = self.prepare_registration_data()
-        response1 = requests.post("https://playground.learnqa.ru/api/user/", data=register_data)
+        response1 = MyRequests.post("/user/", data=register_data)
 
         Assertions.assert_code_status(response1, 200)
         Assertions.assert_json_has_key(response1, "id")
@@ -23,7 +28,7 @@ class TestUserEditExample17(BaseCase):
             'email': email1,
             'password': password1
         }
-        response3 = requests.post("https://playground.learnqa.ru/api/user/login", data=self.login_data1)
+        response3 = MyRequests.post("/user/login", data=self.login_data1)
 
         Assertions.assert_code_status(response3, 200)
         Assertions.assert_json_has_key(response3, "user_id")
@@ -31,7 +36,7 @@ class TestUserEditExample17(BaseCase):
         self.auth_sid1 = self.get_cookie(response3, "auth_sid")
         self.token1 = self.get_header(response3, "x-csrf-token")
 
-
+    @allure.story("1. Попытаемся изменить данные пользователя, будучи неавторизованными")
     def test_1(self):
 # 1. Попытаемся изменить данные пользователя, будучи неавторизованными
 
@@ -39,16 +44,16 @@ class TestUserEditExample17(BaseCase):
         new_name = "Changed_Name"
         new_lastname = "Changed_LastName"
 
-        response2 = requests.put(
-            f"https://playground.learnqa.ru/api/user/{self.user_id1}",
+        response2 = MyRequests.put(
+            f"/user/{self.user_id1}",
             data={"firstName": new_name, "lastName": new_lastname}
         )
         Assertions.assert_code_status(response2, 400)
         Assertions.assert_response_content(response2, f"Auth token not supplied")
 
 # Логинимся под пользователем1, запрашиваем его данные, чтобы проверить, точно ли они не изменились.
-        response4 = requests.get(
-            f"https://playground.learnqa.ru/api/user/{self.user_id1}",
+        response4 = MyRequests.get(
+            f"/user/{self.user_id1}",
             headers={"x-csrf-token": self.token1},
             cookies={"auth_sid": self.auth_sid1}
         )
@@ -66,7 +71,7 @@ class TestUserEditExample17(BaseCase):
             "This is bad. An unauthorized user can edit 'lastName'"
         )
 
-
+    @allure.story("2. Попытаемся изменить данные пользователя, будучи авторизованными другим пользователем")
     def test_2(self):
 # 2. Попытаемся изменить данные пользователя, будучи авторизованными другим пользователем
 
@@ -75,7 +80,7 @@ class TestUserEditExample17(BaseCase):
             'email': 'vinkotov@example.com',
             'password': '1234'
         }
-        response5 = requests.post("https://playground.learnqa.ru/api/user/login", data=login_data2)
+        response5 = MyRequests.post("/user/login", data=login_data2)
 
         Assertions.assert_code_status(response5, 200)
         Assertions.assert_json_has_key(response5, "user_id")
@@ -86,8 +91,8 @@ class TestUserEditExample17(BaseCase):
 #  Из-под пользователя2 меняем данные пользователя1.
         new_name = "Changed_Name"
         new_lastname = "Changed_LastName"
-        response6 = requests.put(
-            f"https://playground.learnqa.ru/api/user/{self.user_id1}",
+        response6 = MyRequests.put(
+            f"/user/{self.user_id1}",
             headers={"x-csrf-token": token2},
             cookies={"auth_sid": auth_sid2},
             data={"firstName": new_name, "lastName": new_lastname}
@@ -95,8 +100,8 @@ class TestUserEditExample17(BaseCase):
         Assertions.assert_code_status(response6, 400)
 
 # Проверяем, что данные пользователя1 не изменены
-        response7 = requests.get(
-            f"https://playground.learnqa.ru/api/user/{self.user_id1}",
+        response7 = MyRequests.get(
+            f"/user/{self.user_id1}",
             headers={"x-csrf-token": self.token1},
             cookies={"auth_sid": self.auth_sid1}
         )
@@ -114,6 +119,7 @@ class TestUserEditExample17(BaseCase):
             "This is bad. An unauthorized user can edit 'lastName'"
         )
 
+    @allure.story("3. Попытаемся изменить email пользователя, будучи авторизованными тем же пользователем, на новый email без символа @")
     def test_3(self):
 # 3. Попытаемся изменить email пользователя, будучи авторизованными тем же пользователем, на новый email без символа @
 
@@ -122,8 +128,8 @@ class TestUserEditExample17(BaseCase):
         random_part = datetime.now().strftime("%m%d%Y%H%M%S")
         new_email = f"{base_part}{random_part}{domain}"
 
-        response8 = requests.put(
-            f"https://playground.learnqa.ru/api/user/{self.user_id1}",
+        response8 = MyRequests.put(
+            f"/user/{self.user_id1}",
             headers={"x-csrf-token": self.token1},
             cookies={"auth_sid": self.auth_sid1},
             data={"email": new_email}
@@ -131,8 +137,8 @@ class TestUserEditExample17(BaseCase):
         Assertions.assert_code_status(response8, 400)
         Assertions.assert_response_content(response8, f"Invalid email format")
 
-        response9 = requests.get(
-            f"https://playground.learnqa.ru/api/user/{self.user_id1}",
+        response9 = MyRequests.get(
+            f"/user/{self.user_id1}",
             headers={"x-csrf-token": self.token1},
             cookies={"auth_sid": self.auth_sid1},
         )
@@ -144,11 +150,12 @@ class TestUserEditExample17(BaseCase):
             "This is bad. Email is changed by incorrect email'"
         )
 
+    @allure.story("4. Попытаемся изменить firstName пользователя, будучи авторизованными тем же пользователем, на очень короткое значение в один символ")
     def test_4(self):
 # 4. Попытаемся изменить firstName пользователя, будучи авторизованными тем же пользователем, на очень короткое значение в один символ
         short_name = "j"
-        response10 = requests.put(
-            f"https://playground.learnqa.ru/api/user/{self.user_id1}",
+        response10 = MyRequests.put(
+            f"/user/{self.user_id1}",
             headers={"x-csrf-token": self.token1},
             cookies={"auth_sid": self.auth_sid1},
             data={"firstName": short_name}
@@ -161,8 +168,8 @@ class TestUserEditExample17(BaseCase):
             "User is created with short 'firstName'"
         )
 
-        response11 = requests.get(
-            f"https://playground.learnqa.ru/api/user/{self.user_id1}",
+        response11 = MyRequests.get(
+            f"/user/{self.user_id1}",
             headers={"x-csrf-token": self.token1},
             cookies={"auth_sid": self.auth_sid1},
         )

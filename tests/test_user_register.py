@@ -2,9 +2,14 @@ from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 from datetime import datetime
+import allure
 
+@allure.epic("Examples from videos")
+@allure.feature("Registration cases")
 class TestUserRegister(BaseCase):
 
+    @allure.story("This test successfully create user with new generate correct email")
+    @allure.description("This test successfully create user with new generate correct email")
     def test_create_user_successfully(self):
         data = self.prepare_registration_data()
 
@@ -15,7 +20,8 @@ class TestUserRegister(BaseCase):
         # print(response.content)
         # print(response.status_code)
 
-
+    @allure.story("This test try create user with existing email")
+    @allure.description("This test try create user with existing email")
     def test_create_user_with_existing_email(self):
         email = 'vinkotov@example.com'
         data = self.prepare_registration_data(email)

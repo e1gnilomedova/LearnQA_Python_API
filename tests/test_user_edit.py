@@ -1,8 +1,12 @@
 from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
+import allure
 
+@allure.epic("Examples from videos")
+@allure.feature("Method PUT")
 class TestUserEdit(BaseCase):
+    @allure.story("Попытка регистрации пользователя под чужой авторизацией")
     def test_edit_just_created_user(self):
 
         # Register

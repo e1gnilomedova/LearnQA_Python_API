@@ -1,15 +1,20 @@
-import requests
+# import requests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
+from lib.my_requests import MyRequests
 from datetime import datetime
 import pytest
+import allure
 
+@allure.epic("Home work")
+@allure.feature("lesson4_Ex15")
 class TestUserRegister(BaseCase):
 
     def setup(self):
-        self.url = "https://playground.learnqa.ru/api/user/"
+        self.url = "/user/"
 
 # ДЗ 15.1
+    @allure.story("15.1 Регистрация с некорректным email")
     def test_create_user_email_incorrect(self):
         base_part = "learnqa"
         domain = "example.com"
@@ -22,7 +27,7 @@ class TestUserRegister(BaseCase):
              'lastName': 'learnqa',
              'email': email_incorrect
          }
-        response = requests.post(self.url, data=data)
+        response = MyRequests.post(self.url, data=data)
         Assertions.assert_code_status(response, 400)
         Assertions.assert_response_content(response, f"Invalid email format")
 
@@ -69,6 +74,8 @@ class TestUserRegister(BaseCase):
             None
         )
     ]
+
+    @allure.story("15.2 Регистрация с отсутствием одного из обязательных параметров")
     @pytest.mark.parametrize(arg_names, arg_values)
     def test_create_user_without_required_parameters(self, password, username, firstName, lastName, email):
         data = {
@@ -78,7 +85,7 @@ class TestUserRegister(BaseCase):
             'lastName': lastName,
             'email': email
         }
-        response = requests.post(self.url, data=data)
+        response = MyRequests.post(self.url, data=data)
         Assertions.assert_code_status(response, 400)
 
         decode_content = response.content.decode("utf-8")
@@ -89,6 +96,7 @@ class TestUserRegister(BaseCase):
 
 
 # ДЗ 15.3
+    @allure.story("15.3 Регистрация с очень коротким именем")
     def test_create_user_short_name(self):
         base_part = "learnqa"
         domain = "example.com"
@@ -102,12 +110,13 @@ class TestUserRegister(BaseCase):
              'lastName': 'learnqa',
              'email': email
          }
-        response = requests.post(self.url, data=data)
+        response = MyRequests.post(self.url, data=data)
         Assertions.assert_code_status(response, 400)
         Assertions.assert_response_content(response, f"The value of 'firstName' field is too short")
 
 
 # ДЗ 15.4
+    @allure.story("15.4 Регистрация с очень длинным именем")
     def test_create_user_long_name(self):
         base_part = "learnqa"
         domain = "example.com"
@@ -121,6 +130,6 @@ class TestUserRegister(BaseCase):
              'lastName': 'learnqa',
              'email': email
          }
-        response = requests.post(self.url, data=data)
+        response = MyRequests.post(self.url, data=data)
         Assertions.assert_code_status(response, 400)
         Assertions.assert_response_content(response, f"The value of 'firstName' field is too long")

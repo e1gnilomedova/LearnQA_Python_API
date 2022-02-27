@@ -2,8 +2,14 @@
 from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
+import allure
 
+
+@allure.epic("Examples from videos")
+@allure.feature("Method DELETE")
 class TestUserDelete(BaseCase):
+
+    @allure.story("Регистрируем нового пользователя1 и логинимся под существующим пользователем2.")
     def setup(self):
 #Регистрируем нового пользователя1.
         register_data = self.prepare_registration_data()
@@ -44,6 +50,8 @@ class TestUserDelete(BaseCase):
         self.token2 = self.get_header(response2, "x-csrf-token")
         self.user_id2 = self.get_json_value(response2, "user_id")
 
+
+    @allure.story("1. Первый - на попытку удалить пользователя по ID 2.")
     def test_1(self):
 #1. Первый - на попытку удалить пользователя по ID 2.
         response3 = MyRequests.delete(
@@ -65,7 +73,8 @@ class TestUserDelete(BaseCase):
         id = int(self.get_json_value(response4, "id"))
         assert id == self.user_id2, "Пользователь удалился, хотя не должен был"
 
-
+    @allure.story("2. Второй - позитивный. Создать пользователя, авторизоваться из-под него, удалить, "
+                  "затем попробовать получить его данные по ID и убедиться, что пользователь действительно удален")
     def test_2(self):
 #2. Второй - позитивный. Создать пользователя, авторизоваться из-под него, удалить, затем попробовать получить его данные по ID
 # и убедиться, что пользователь действительно удален.
@@ -85,6 +94,7 @@ class TestUserDelete(BaseCase):
         Assertions.assert_code_status(response6, 404)
         Assertions.assert_response_content(response6, f"User not found")
 
+    @allure.story("3. Третий - негативный, попробовать удалить пользователя, будучи авторизованными другим пользователем.")
     def test_3(self):
 #3. Третий - негативный, попробовать удалить пользователя, будучи авторизованными другим пользователем.
         response7 = MyRequests.delete(
