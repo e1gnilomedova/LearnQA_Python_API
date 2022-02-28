@@ -10,6 +10,7 @@ class TestUserRegister(BaseCase):
 
     @allure.story("This test successfully create user with new generate correct email")
     @allure.description("This test successfully create user with new generate correct email")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_create_user_successfully(self):
         data = self.prepare_registration_data()
 
@@ -22,6 +23,7 @@ class TestUserRegister(BaseCase):
 
     @allure.story("This test try create user with existing email")
     @allure.description("This test try create user with existing email")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_create_user_with_existing_email(self):
         email = 'vinkotov@example.com'
         data = self.prepare_registration_data(email)

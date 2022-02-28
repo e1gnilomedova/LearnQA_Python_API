@@ -10,6 +10,7 @@ import allure
 class TestUserDelete(BaseCase):
 
     @allure.story("Регистрируем нового пользователя1 и логинимся под существующим пользователем2.")
+    @allure.severity(allure.severity_level.CRITICAL)
     def setup(self):
 #Регистрируем нового пользователя1.
         register_data = self.prepare_registration_data()
@@ -52,6 +53,7 @@ class TestUserDelete(BaseCase):
 
 
     @allure.story("1. Первый - на попытку удалить пользователя по ID 2.")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_1(self):
 #1. Первый - на попытку удалить пользователя по ID 2.
         response3 = MyRequests.delete(
@@ -75,6 +77,7 @@ class TestUserDelete(BaseCase):
 
     @allure.story("2. Второй - позитивный. Создать пользователя, авторизоваться из-под него, удалить, "
                   "затем попробовать получить его данные по ID и убедиться, что пользователь действительно удален")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_2(self):
 #2. Второй - позитивный. Создать пользователя, авторизоваться из-под него, удалить, затем попробовать получить его данные по ID
 # и убедиться, что пользователь действительно удален.
@@ -95,6 +98,7 @@ class TestUserDelete(BaseCase):
         Assertions.assert_response_content(response6, f"User not found")
 
     @allure.story("3. Третий - негативный, попробовать удалить пользователя, будучи авторизованными другим пользователем.")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_3(self):
 #3. Третий - негативный, попробовать удалить пользователя, будучи авторизованными другим пользователем.
         response7 = MyRequests.delete(

@@ -7,6 +7,7 @@ import allure
 @allure.feature("Method PUT")
 class TestUserEdit(BaseCase):
     @allure.story("Попытка регистрации пользователя под чужой авторизацией")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_edit_just_created_user(self):
 
         # Register

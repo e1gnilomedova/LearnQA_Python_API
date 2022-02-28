@@ -4,6 +4,7 @@ from lib.assertions import Assertions
 from lib.my_requests import MyRequests
 from datetime import datetime
 import allure
+TEST_CASE_LINK = 'https://jira.test.ru/browse/TESTCASE-1'
 
 @allure.epic("Home work")
 @allure.feature("lesson4_Ex16")
@@ -11,6 +12,8 @@ class TestUserRegister(BaseCase):
 
 #Создаем нового юзера, чтобы получить его id
     @allure.story("Получение данных первого юзера с авторизацией из-под чужого")
+    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.testcase(TEST_CASE_LINK, 'Link TESTCASE in Jira')
     def test_get_user_details_of_another_user(self):
         data = self.prepare_registration_data()
         response = MyRequests.post("/user/", data=data)

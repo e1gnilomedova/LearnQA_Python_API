@@ -8,6 +8,7 @@ import allure
 @allure.epic("Examples from videos")
 # @allure.feature("Authorization cases")
 @allure.feature("Authorization cases")
+@allure.severity(allure.severity_level.CRITICAL)
 class TestUserAuth(BaseCase):
     exclude_params = [
         ("no cookie"),
@@ -27,6 +28,7 @@ class TestUserAuth(BaseCase):
         self.user_id_from_auth_method = self.get_json_value(response1, "user_id")
 
     @allure.story("This test successfully authorize user by email and password")
+    @allure.severity(allure.severity_level.CRITICAL)
     @allure.description("This test successfully authorize user by email and password")
     def test_user_auth(self):
         response2 = MyRequests.get(
@@ -43,6 +45,7 @@ class TestUserAuth(BaseCase):
         )
 
     @allure.story("This test checks authorization status w/o sending auth cookie or token")
+    @allure.severity(allure.severity_level.CRITICAL)
     @allure.description("This test checks authorization status w/o sending auth cookie or token")
     @pytest.mark.parametrize('condition', exclude_params)
     def test_negative_auth_check(self, condition):

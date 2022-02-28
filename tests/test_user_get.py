@@ -8,6 +8,7 @@ import allure
 class TestUserGet(BaseCase):
 
     @allure.story("Получение данных без авторизации")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_get_user_details_not_auth(self):
         response = MyRequests.get("/user/2")
         Assertions.assert_json_has_key(response, "username")
@@ -16,6 +17,7 @@ class TestUserGet(BaseCase):
         Assertions.assert_json_has_not_key(response, "lastName")
 
     @allure.story("Получение данных с авторизацией того же пользователя")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_get_user_details_auth_as_same_user(self):
         data = {
             'email': 'vinkotov@example.com',
