@@ -88,5 +88,5 @@ class Test1234:
 
         if request_http_method == param_http_method and (response.status_code != 200 or response.text == f"Wrong method provided"):
             print(f" Условие2: Тип запроса '{request_http_method}' равен значению method '{param_http_method}',"
-                  f"но сервер считает, что это  не так.")
+                  f"но сервер считает, что это не так.")
         assert True
